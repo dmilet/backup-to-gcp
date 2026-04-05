@@ -14,7 +14,7 @@ Choose one method:
 
 ### Option A: Service Account (Recommended)
 ```bash
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/.config/gcloud/application_default_credentials.json
 ```
 
 ### Option B: User Credentials
@@ -23,8 +23,8 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
 ```bash
 sudo apt-get update
 sudo apt-get install ca-certificates gnupg curl
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/pt/sources.list.d/google-cloud-sdk.list
+sudo curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 sudo apt-get update && sudo apt-get install google-cloud-cli
 ```
 
@@ -38,7 +38,7 @@ gcloud init
 
 If you don't already have a bucket:
 ```bash
-gcloud storage buckets create gs://cold-backup-david \
+gcloud storage buckets create gs://my-backup-bucket \
        --default-storage-class=ARCHIVE \
        --location=US-CENTRAL1 \
        --uniform-bucket-level-access \
@@ -49,10 +49,8 @@ gcloud storage buckets create gs://cold-backup-david \
 
 ```bash
 # Basic backup
-python backup_utility.py my-backup-bucket /path/to/backup
+python backup_utility.py --bucket my-backup-bucket --source-dir $(pwd)  --preview
 
-# With force flag (backup all files)
-python backup_utility.py my-backup-bucket /path/to/backup --force
 ```
 
 ## Step 5: Verify Results
@@ -66,16 +64,7 @@ You should see:
 - `backups/YYYY-MM-DD/` directories with your files
 - `backup_index.json` metadata file
 
-## Step 6: Schedule Regular Backups
 
-### Linux/macOS: Add to Crontab
-```bash
-# Edit crontab
-crontab -e
-
-# Add this line for daily 2 AM backup
-0 2 * * * cd /home/user/backup-to-gcp && python3 backup_utility.py my-backup-bucket /home/user/documents >> /var/log/backup.log 2>&1
-```
 
 ## Common Issues
 
@@ -87,7 +76,7 @@ pip install -r requirements.txt
 ### "Credentials not found"
 ```bash
 # Set credentials file
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json
+export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/.config/gcloud/application_default_credentials.json
 
 # OR authenticate with gcloud
 gcloud auth application-default login

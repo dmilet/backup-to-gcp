@@ -40,7 +40,7 @@ gsutil mb gs://your-backup-bucket-name
 
 Option A: Using service account key file:
 ```bash
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/.config/gcloud/application_default_credentials.json
 ```
 
 Option B: Using gcloud CLI:
@@ -60,23 +60,15 @@ The service account or user needs these permissions:
 
 ### Basic backup:
 ```bash
-python backup_utility.py <bucket-name> <local-directory>
+python backup_utility.py --bucket <bucket-name> --source-dir <local-directory>
 ```
 
 Example:
 ```bash
-python backup_utility.py my-backup-bucket /home/user/documents
+python backup_utility.py --bucket my-backup-bucket --source-dir /home/user/documents
 ```
 
-### Force backup (backup all files regardless of modification):
-```bash
-python backup_utility.py <bucket-name> <local-directory> --force
-```
 
-### Specify GCP project ID:
-```bash
-python backup_utility.py <bucket-name> <local-directory> --project-id=my-project
-```
 
 ## How It Works
 
