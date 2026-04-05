@@ -144,8 +144,9 @@ class GCPBackupUtility:
         return hashlib.sha256(encrypted_data).hexdigest()
     
     def _get_relative_path(self, file_path: Path) -> str:
-        """Get the relative path from local_path."""
-        return str(file_path.relative_to(self.local_path))
+        """Get the relative path from local_path, including the leaf directory."""
+        relative_to_parent = file_path.relative_to(self.local_path)
+        return str(Path(self.local_path.name) / relative_to_parent)
     
     def _load_index(self) -> Dict:
         """
